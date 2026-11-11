@@ -7,6 +7,24 @@
 -- 1. Enable UUID Extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- 2. ASHA Workers Table (Authentication & Fieldwork Profile)
+CREATE TABLE IF NOT EXISTS public.asha_workers (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT,
+    password_hash TEXT,
+    badge_id TEXT,
+    state TEXT NOT NULL DEFAULT 'Karnataka',
+    district TEXT NOT NULL,
+    taluk TEXT NOT NULL,
+    sector TEXT NOT NULL,
+    facility TEXT NOT NULL,
+    deic TEXT NOT NULL,
+    catchment_population INTEGER DEFAULT 1000,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
 -- 2. Children Table
 CREATE TABLE IF NOT EXISTS public.children (
     id TEXT PRIMARY KEY,
@@ -99,6 +117,7 @@ CREATE TABLE IF NOT EXISTS public.followups (
 -- ==============================================================================
 
 ALTER TABLE public.children ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.asha_workers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.caregiver_consent ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.deic_referrals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.observations ENABLE ROW LEVEL SECURITY;
@@ -119,6 +138,17 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'children' AND policyname = 'Public delete access for children') THEN
         CREATE POLICY "Public delete access for children" ON public.children FOR DELETE USING (true);
+    END IF;
+
+    -- ASHA Workers (Sign-up, Authentication, Profile Management)
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'asha_workers' AND policyname = 'Public read asha_workers') THEN
+        CREATE POLICY "Public read asha_workers" ON public.asha_workers FOR SELECT USING (true);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'asha_workers' AND policyname = 'Public insert asha_workers') THEN
+        CREATE POLICY "Public insert asha_workers" ON public.asha_workers FOR INSERT WITH CHECK (true);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'asha_workers' AND policyname = 'Public update asha_workers') THEN
+        CREATE POLICY "Public update asha_workers" ON public.asha_workers FOR UPDATE USING (true);
     END IF;
 
     -- Caregiver Consent

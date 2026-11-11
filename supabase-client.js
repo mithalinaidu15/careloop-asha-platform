@@ -272,6 +272,76 @@ const SupabaseService = (function() {
     return true;
   }
 
+  // --- ASHA Worker Authentication & Registration ---
+
+  async function registerWorker(profile) {
+    if (!client) return null;
+    const row = {
+      id: profile.id,
+      name: profile.name,
+      phone: profile.phone,
+      email: profile.email || null,
+      password_hash: profile.password || null,
+      badge_id: profile.badgeId || null,
+      state: profile.state || 'Karnataka',
+      district: profile.district,
+      taluk: profile.taluk,
+      sector: profile.sector,
+      facility: profile.facility,
+      deic: profile.deic,
+      catchment_population: profile.catchment ? parseInt(profile.catchment) : 1000
+    };
+    try {
+      const { data, error } = await client.from('asha_workers').insert([row]);
+      if (error) {
+        console.warn("Supabase registerWorker warning (local fallback used):", error.message);
+      }
+      return true;
+    } catch (e) {
+      console.warn("Could not save worker to Supabase table:", e);
+      return false;
+    }
+  }
+
+  async function authenticateWorker(identifier, password) {
+    if (!client) return null;
+    try {
+      const cleanIdent = identifier.trim();
+      const { data, error } = await client
+        .from('asha_workers')
+        .select('*')
+        .or(`phone.eq.${cleanIdent},email.eq.${cleanIdent}`)
+        .limit(1);
+
+      if (error || !data || data.length === 0) {
+        return null;
+      }
+      const worker = data[0];
+      if (worker.password_hash && password && worker.password_hash !== password) {
+        return { success: false, message: 'Invalid password' };
+      }
+      return {
+        success: true,
+        worker: {
+          id: worker.id,
+          name: worker.name,
+          phone: worker.phone,
+          email: worker.email,
+          badgeId: worker.badge_id,
+          state: worker.state,
+          district: worker.district,
+          taluk: worker.taluk,
+          sector: worker.sector,
+          facility: worker.facility,
+          deic: worker.deic,
+          catchment: worker.catchment_population
+        }
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
   return {
     init,
     getClient: () => client,
@@ -286,7 +356,9 @@ const SupabaseService = (function() {
     insertChild,
     insertObservation,
     insertDeicReferral,
-    insertFollowup
+    insertFollowup,
+    registerWorker,
+    authenticateWorker
   };
 })();
 
