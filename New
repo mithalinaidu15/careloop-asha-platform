@@ -1,0 +1,15 @@
+# Initialise the repo if you ever start from a fresh folder
+git init
+git remote add origin https://github.com/mithalinaidu15/careloop-asha-platform.git
+
+# Pull the latest changes (always do this before you start)
+git pull origin main
+
+# Stage all changes (e.g., after editing UI text or adding new files)
+git add .
+
+# Commit with a clear message
+git commit -m "Update UI copy, add navigation‑assist overlay, clean up auth strings"
+
+# Push to the remote (requires a valid PAT with repo scope)
+git push origin main
