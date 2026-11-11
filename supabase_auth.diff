@@ -1,0 +1,90 @@
+*** Begin Patch
+*** Update File: supabase-client.js
+@@
+-// Existing custom registerWorker (stores plain password_hash)
+-export async function registerWorker(workerData) {
+-  const { data, error } = await supabase
+-    .from('asha_workers')
+-    .insert([workerData]);
+-  if (error) throw error;
+-  return data;
+-}
+-
+-// Existing custom authenticateWorker (simple query)
+-export async function authenticateWorker(identifier, password) {
+-  const { data, error } = await supabase
+-    .from('asha_workers')
+-    .select()
+-    .or(`email.eq.${identifier},phone.eq.${identifier}`)
+-    .eq('password_hash', password)
+-    .single();
+-  if (error) throw error;
+-  return data;
+-}
++/** --------------------------------------------------------------
++ *  SUPABASE AUTH INTEGRATION
++ *  --------------------------------------------------------------
++ *  • Sign‑up → supabase.auth.signUp() + insert extra profile fields
++ *  • Sign‑in → supabase.auth.signInWithPassword()
++ *  • Session restore → supabase.auth.getSession()
++ *  • Logout → supabase.auth.signOut()
++ *  -------------------------------------------------------------- */
++
++// Register a new ASHA worker (uses Supabase Auth)
++export async function registerWorker(profile) {
++  // 1️⃣ Create the auth user (email + password). Phone‑only sign‑up can be added later.
++  const { user, session, error: authError } = await supabase.auth.signUp({
++    email: profile.email,
++    password: profile.password,
++    phone: profile.phone,
++  });
++  if (authError) throw authError;
++
++  // 2️⃣ Insert the extra profile fields (approved defaults to false)
++  const { data, error: insertError } = await supabase
++    .from('asha_workers')
++    .insert([{ 
++      id: user.id,
++      name: profile.name,
++      phone: profile.phone,
++      email: profile.email,
++      badge_id: profile.badgeId,
++      state: profile.state,
++      district: profile.district,
++      taluk: profile.taluk,
++      sector: profile.sector,
++      facility: profile.facility,
++      deic: profile.deic,
++      catchment_population: profile.catchment,
++      approved: false,
++    }]);
++  if (insertError) throw insertError;
++
++  return { user, session, profile: data[0] };
++}
++
++// Login with email/phone + password
++export async function authenticateWorker(identifier, password) {
++  const { data, error } = await supabase.auth.signInWithPassword({
++    email: identifier.includes('@') ? identifier : undefined,
++    phone: identifier.includes('@') ? undefined : identifier,
++    password,
++  });
++  if (error) throw error;
++  return data; // contains session & user
++}
++
++// Helper to fetch the current session (called on app start)
++export async function getCurrentSession() {
++  const { data, error } = await supabase.auth.getSession();
++  if (error) console.warn('Supabase session error', error);
++  return data?.session ?? null;
++}
++
++// Logout helper
++export async function logoutUser() {
++  const { error } = await supabase.auth.signOut();
++  if (error) console.warn('Logout error', error);
++}
+*** End Patch
+*** End Patch

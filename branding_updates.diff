@@ -1,0 +1,34 @@
+*** Begin Patch
+*** Update File: index.html
+@@
+-  <title>CareLoop ASHA | Community Health Facilitator Field Platform</title>
+-  <meta name="description" content="Field register and child developmental tracking platform for ASHA community health workers.">
++  <title>WeCare – Community Health Facilitator Field Platform</title>
++  <meta name="description" content="Field register and child developmental tracking platform for ASHA community health workers.">
+*** End Patch
+*** Begin Patch
+*** Update File: app.js
+@@
+-    appTitle: "CareLoop ASHA",
+-    appSubtitle: "Community Health Facilitator Field Platform",
++    appTitle: "WeCare",
++    appSubtitle: "Community Health Facilitator Field Platform",
+@@
+-      login_title: "ASHA Worker Sign In",
+-      login_subtitle: "Access your field register & child screening records",
+-      signup_title: "Guided ASHA Worker Sign Up",
+-      signup_subtitle: "Step‑by‑step field catchment & healthcare linkage setup",
++      login_title: "WeCare – Sign In",
++      login_subtitle: "Access your field register & child screening records",
++      signup_title: "WeCare – Guided Sign Up",
++      signup_subtitle: "Step‑by‑step field catchment & healthcare linkage setup",
+@@
+-      btn_login: "Sign In to Field Register →",
++      btn_login: "Sign In →",
+@@
+-      btn_complete: "🎉 Complete Guided Sign‑Up & Launch Dashboard",
++      btn_complete: "🎉 Complete Sign‑Up & Launch Dashboard",
+@@
+-      menu_title: "ASHA Field Services",
++      menu_title: "WeCare – Field Services",
+*** End Patch

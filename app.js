@@ -74,7 +74,7 @@ try {
 const i18n = {
   en: {
     name: "English",
-    appTitle: "CareLoop ASHA",
+    appTitle: "WeCare",
     appSubtitle: "Community Health Facilitator Field Platform",
     greeting: "Welcome, ASHA Worker",
     designation: "Community Health Facilitator",

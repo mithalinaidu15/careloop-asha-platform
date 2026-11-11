@@ -1,0 +1,31 @@
+*** Begin Patch
+*** Update File: app.js
+@@
+-    name: "ASHA Worker",
+-    id: "CHW",
+-    sector: "Local Sub-Centre / Ward",
+-    deic: "District Early Intervention Centre (DEIC)"
++    name: "ASHA Worker",
++    id: "CHW",
++    sector: "Local Sub‑Centre / Ward",
++    deic: "District Early Intervention Centre (DEIC)"
+@@
+-    // Example placeholder – remove before production
+-    const exampleChildren = [
+-      { name: "Sumitra Bai", age: "2 y 4 m", location: "Ramanagara", status: "Screened" },
+-      { name: "Rahul Kumar", age: "1 y 9 m", location: "Bangalore", status: "Follow‑up due" }
+-    ];
+-    // Render example rows if there is no data
+-    if (AppState.caseload.length === 0) {
+-      contentHtml = renderEmptyDashboard(exampleChildren);
+-    }
++    // Show an empty‑state when there are no children
++    if (AppState.caseload.length === 0) {
++      contentHtml = renderEmptyDashboard();
++    }
+@@
+-    // Placeholder text – replace with generic prompt
+-    const placeholder = "Enter child name (e.g. Sumitra Bai)";
++    // Generic prompt
++    const placeholder = "Enter child name";
+*** End Patch
