@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+careloop.db
+.vercel
+.vscode
