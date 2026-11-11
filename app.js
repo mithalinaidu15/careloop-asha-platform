@@ -45,16 +45,10 @@ const AppState = {
 
   // Authentication State
   auth: {
-    isAuthenticated: true, // Default active session for immediate usability
-    mode: 'signup', // 'signup' | 'login'
+    isAuthenticated: false, // User not authenticated by default
+    mode: 'login', // 'signup' | 'login'
     pendingApproval: false,
-    currentUser: {
-      id: 'worker-101',
-      name: 'Sunita Sharma',
-      role: 'ASHA worker',
-      location: 'Jaipur',
-      facility: 'Govt. Primary School, Shastri Nagar'
-    },
+    currentUser: null, // will be set after successful login
     formData: {
       fullName: '',
       contactNumber: '',
