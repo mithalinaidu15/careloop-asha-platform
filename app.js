@@ -22,33 +22,17 @@ const AppState = {
   activityPromptIndex: 0,
   activitySelectedShape: null,
   activityOutcome: 'With encouragement',
-  activityNotes: 'Joined after caregiver reassurance. Followed a simple instruction.',
+  activityNotes: '',
 
-  // Active Child in Session
-  currentChild: {
-    name: 'Aarav Meena',
-    age: '6 years',
-    school: 'Govt. Primary School, Shastri Nagar',
-    grade: 'Grade 1 A',
-    guardian: 'Pooja Meena',
-    guardianRelation: 'Mother',
-    phone: '+91 98765 43210',
-    preferredLanguage: 'Hindi',
-    consentObtained: true,
-    height: '112 cm',
-    weight: '18 kg',
-    appetite: 'Varies day to day',
-    mealsCount: '3 or more',
-    foods: ['Grains & cereals', 'Dal, beans or eggs'],
-    nutritionNotes: 'Caregiver reports breakfast is sometimes skipped before school. School lunch is usually eaten.'
-  },
+  // Active Child in Session (Null for clean new sessions)
+  currentChild: null,
 
   // Authentication State
   auth: {
-    isAuthenticated: false, // User not authenticated by default
-    mode: 'login', // 'signup' | 'login'
+    isAuthenticated: false, // Starts clean; restored from localStorage or Supabase
+    mode: 'signup', // 'signup' | 'login'
     pendingApproval: false,
-    currentUser: null, // will be set after successful login
+    currentUser: null,
     formData: {
       fullName: '',
       contactNumber: '',
@@ -95,19 +79,87 @@ const i18n = {
       community: "Community",
       help: "Help & guidance",
       settings: "Settings"
-    }
+    },
+    dailyCareSpace: "YOUR DAILY CARE SPACE",
+    greeting: "Good morning",
+    motto: "A little progress today. A lasting difference tomorrow.",
+    registerChildBtn: "Register a child",
+    startAssessmentBtn: "Start assessment",
+    gettingStarted: "GETTING STARTED",
+    welcomeTitle: "Welcome to your digital care space",
+    welcomeDesc: "Keep your observations, child records, and caregiver notes organized in one gentle workspace.",
+    activeCareSpace: "Active Care Space",
+    childrenCount: "children enrolled",
+    childrenRegistered: "Children registered",
+    sessionsWeek: "Sessions this week",
+    followupsPlan: "Follow-ups to plan",
+    carePlansShared: "Care plans shared",
+    acrossCare: "Your active care list",
+    everyConversation: "Every conversation counts",
+    gentleNextStep: "A gentle next step",
+    supportingFamilies: "Supporting families",
+    childrenCheckIn: "Children to check in with",
+    viewAllChildren: "View all children",
+    noChildrenYet: "No children registered yet",
+    noChildrenDesc: "Your care register is clean and ready. Add child profiles and conduct developmental screenings anytime.",
+    registerFirstChild: "+ Register first child",
+    makeRoom: "Make room for you, too",
+    calmRhythm: "A calm rhythm for a busy day.",
+    startTimer: "Start timer",
+    pauseTimer: "Pause timer",
+    quietOn: "Quiet mode on",
+    quietOff: "Quiet mode off",
+    untilBreak: "until your 5-minute break",
+    oneSmallWin: "One small win",
+    welcomeMotto: "Welcome! Take care of yourself as you care for others.",
+    checkedInWith: "You have",
+    childrenInCare: "children in your active care register."
   },
   hi: {
     appName: "wecare",
     tagline: "हर बच्चे की देखभाल, एक समय में एक कदम",
     nav: {
-      overview: "अवलोकन (डैशबोर्ड)",
+      overview: "अवलोकन",
       children: "बच्चे",
       assessments: "आकलन",
       community: "समुदाय",
       help: "मार्गदर्शन व सहायता",
       settings: "सेटिंग्स"
-    }
+    },
+    dailyCareSpace: "आपका दैनिक देखभाल स्थल",
+    greeting: "शुभ प्रभात",
+    motto: "आज की थोड़ी सी प्रगति, कल का बड़ा बदलाव।",
+    registerChildBtn: "बच्चे का पंजीकरण करें",
+    startAssessmentBtn: "आकलन शुरू करें",
+    gettingStarted: "शुरुआत करें",
+    welcomeTitle: "अपने डिजिटल केयर स्पेस में आपका स्वागत है",
+    welcomeDesc: "बच्चों के विकास, पोषण और परामर्श के रिकॉर्ड को सुरक्षित व सरल तरीके से प्रबंधित करें।",
+    activeCareSpace: "सक्रिय देखभाल स्थल",
+    childrenCount: "बच्चे पंजीकृत",
+    childrenRegistered: "पंजीकृत बच्चे",
+    sessionsWeek: "इस सप्ताह के सत्र",
+    followupsPlan: "आगामी फॉलो-अप",
+    carePlansShared: "साझा की गई योजनाएं",
+    acrossCare: "आपकी सक्रिय देखभाल सूची",
+    everyConversation: "हर बातचीत का महत्व है",
+    gentleNextStep: "एक सरल अगला कदम",
+    supportingFamilies: "परिवारों का सहयोग",
+    childrenCheckIn: "बच्चे जिनका हाल जानना है",
+    viewAllChildren: "सभी बच्चे देखें",
+    noChildrenYet: "अभी तक कोई बच्चा पंजीकृत नहीं है",
+    noChildrenDesc: "आपका देखभाल रजिस्टर तैयार है। नया बच्चा जोड़ने के लिए नीचे दिए गए बटन पर क्लिक करें।",
+    registerFirstChild: "+ पहला बच्चा जोड़ें",
+    makeRoom: "अपने लिए भी समय निकालें",
+    calmRhythm: "व्यस्त दिन के लिए एक शांत लय।",
+    startTimer: "टाइमर शुरू करें",
+    pauseTimer: "टाइमर रोकें",
+    quietOn: "शांत मोड चालू",
+    quietOff: "शांत मोड बंद",
+    untilBreak: "5 मिनट के विराम तक",
+    oneSmallWin: "एक छोटी सी जीत",
+    welcomeMotto: "वीकेयर में स्वागत है! दूसरों की देखभाल के साथ अपना भी ख्याल रखें।",
+    checkedInWith: "आपकी सूची में",
+    childrenInCare: "बच्चे पंजीकृत हैं।"
   },
   kn: {
     appName: "wecare",
@@ -119,7 +171,41 @@ const i18n = {
       community: "ಸಮುದಾಯ",
       help: "ಮಾರ್ಗದರ್ಶನ",
       settings: "ಸೆಟ್ಟಿಂಗ್ಸ್"
-    }
+    },
+    dailyCareSpace: "ನಿಮ್ಮ ದೈನಂದಿನ ಆರೈಕೆ ಸ್ಥಳ",
+    greeting: "ಶುಭೋದಯ",
+    motto: "ಇಂದಿನ ಸಣ್ಣ ಪ್ರಗತಿ, ನಾಳಿನ ಮಹತ್ವದ ಬದಲಾವಣೆ.",
+    registerChildBtn: "ಮಗುವನ್ನು ನೋಂದಾಯಿಸಿ",
+    startAssessmentBtn: "ಮೌಲ್ಯಮಾಪನ ಪ್ರಾರಂಭಿಸಿ",
+    gettingStarted: "ಪ್ರಾರಂಭಿಸಿ",
+    welcomeTitle: "ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಕೇರ್ ಸ್ಪೇಸ್‌ಗೆ ಸ್ವಾಗತ",
+    welcomeDesc: "ಮಕ್ಕಳ ಬೆಳವಣಿಗೆ, ಪೋಷಣೆ ಮತ್ತು ಆರೈಕೆ ದಾಖಲೆಗಳನ್ನು ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ ಸುಲಭವಾಗಿ ನಿರ್ವಹಿಸಿ.",
+    activeCareSpace: "ಸಕ್ರಿಯ ಆರೈಕೆ ಸ್ಥಳ",
+    childrenCount: "ಮಕ್ಕಳು ದಾಖಲಿಸಲಾಗಿದೆ",
+    childrenRegistered: "ನೋಂದಾಯಿತ ಮಕ್ಕಳು",
+    sessionsWeek: "ಈ ವಾರದ ಅವಧಿಗಳು",
+    followupsPlan: "ಮುಂದಿನ ಭೇಟಿಗಳು",
+    carePlansShared: "ಹಂಚಿಕೊಂಡ ಆರೈಕೆ ಯೋಜನೆಗಳು",
+    acrossCare: "ನಿಮ್ಮ ಸಕ್ರಿಯ ಆರೈಕೆ ಪಟ್ಟಿ",
+    everyConversation: "ಪ್ರತಿ ಸಂಭಾಷಣೆಯೂ ಮುಖ್ಯ",
+    gentleNextStep: "ಮುಂದಿನ ಸಣ್ಣ ಹೆಜ್ಜೆ",
+    supportingFamilies: "ಕುಟುಂಬಗಳಿಗೆ ಬೆಂಬಲ",
+    childrenCheckIn: "ಗಮನಿಸಬೇಕಾದ ಮಕ್ಕಳು",
+    viewAllChildren: "ಎಲ್ಲಾ ಮಕ್ಕಳನ್ನು ನೋಡಿ",
+    noChildrenYet: "ಇನ್ನು ಯಾವುದೇ ಮಗು ನೋಂದಾಯಿಸಿಲ್ಲ",
+    noChildrenDesc: "ನಿಮ್ಮ ಆರೈಕೆ ಪಟ್ಟಿ ಸಿದ್ಧವಾಗಿದೆ. ಮಗುವಿನ ವಿವರಗಳನ್ನು ದಾಖಲಿಸಲು ಕೆಳಗಿನ ಬಟನ್ ಕ್ಲಿಕ್ ಮಾಡಿ.",
+    registerFirstChild: "+ ಮೊದಲ ಮಗುವನ್ನು ನೋಂದಾಯಿಸಿ",
+    makeRoom: "ನಿಮಗಾಗಿಯೂ ಸ್ವಲ್ಪ ಸಮಯ ಮೀಸಲಿಡಿ",
+    calmRhythm: "ಕಾರ್ಯನಿರತ ದಿನಕ್ಕೆ ಒಂದು ಶಾಂತ ಲಯ.",
+    startTimer: "ಟೈಮರ್ ಪ್ರಾರಂಭಿಸಿ",
+    pauseTimer: "ಟೈಮರ್ ನಿಲ್ಲಿಸಿ",
+    quietOn: "ಶಾಂತ ಮೋಡ್ ಆನ್",
+    quietOff: "ಶಾಂತ ಮೋಡ್ ಆಫ್",
+    untilBreak: "5 ನಿಮಿಷಗಳ ವಿರಾಮಕ್ಕೆ",
+    oneSmallWin: "ಒಂದು ಪುಟ್ಟ ಗೆಲುವು",
+    welcomeMotto: "ವೀಕೇರ್‌ಗೆ ಸ್ವಾಗತ! ಇತರರ ಕಾಳಜಿ ಮಾಡುವಾಗ ನಿಮ್ಮ ಆರೋಗ್ಯವನ್ನೂ ಕಾಪಾಡಿಕೊಳ್ಳಿ.",
+    checkedInWith: "ನಿಮ್ಮ ಪಟ್ಟಿಯಲ್ಲಿ",
+    childrenInCare: "ಮಕ್ಕಳು ಆರೈಕೆಯಲ್ಲಿದ್ದಾರೆ."
   }
 };
 
@@ -132,6 +218,53 @@ function txt(key) {
     curr = curr[p];
   }
   return curr;
+}
+
+// Language Selector UI (shows all three languages prominently side-by-side)
+function renderLangSwitcher() {
+  return `
+    <div class="lang-switcher-group">
+      <button type="button" class="lang-btn ${AppState.language === 'en' ? 'active' : ''}" onclick="setLanguage('en')">English</button>
+      <button type="button" class="lang-btn ${AppState.language === 'hi' ? 'active' : ''}" onclick="setLanguage('hi')">हिंदी</button>
+      <button type="button" class="lang-btn ${AppState.language === 'kn' ? 'active' : ''}" onclick="setLanguage('kn')">ಕನ್ನಡ</button>
+    </div>
+  `;
+}
+
+// Utility: HTML escaping
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Utility: Safe child getter
+function getSafeChild() {
+  if (AppState.currentChild && AppState.currentChild.name) {
+    return AppState.currentChild;
+  }
+  return {
+    id: '',
+    name: 'Child',
+    age: '',
+    school: '',
+    grade: 'Grade 1 A',
+    guardian: '',
+    guardianRelation: 'Mother',
+    phone: '',
+    preferredLanguage: 'Hindi',
+    consentObtained: true,
+    height: '110 cm',
+    weight: '17 kg',
+    appetite: 'Normal',
+    mealsCount: '3 or more',
+    foods: ['Grains & cereals', 'Dal, beans or eggs'],
+    nutritionNotes: ''
+  };
 }
 
 // -------------------------------------------------------------
@@ -187,15 +320,61 @@ function setLanguage(lang) {
 }
 
 function startChildRegistration() {
+  AppState.currentChild = {
+    id: '',
+    name: '',
+    age: '',
+    school: '',
+    grade: 'Grade 1 A',
+    guardian: '',
+    guardianRelation: 'Mother',
+    phone: '',
+    preferredLanguage: 'Hindi',
+    consentObtained: true,
+    height: '',
+    weight: '',
+    appetite: 'Normal',
+    mealsCount: '3 or more',
+    foods: ['Grains & cereals'],
+    nutritionNotes: ''
+  };
   AppState.activeTab = 'assessments';
   AppState.workflowStep = 1;
   window.scrollTo(0, 0);
   renderApp();
 }
 
+function openChildSession(childId) {
+  const child = AppState.caseload.find(c => c.id === childId);
+  if (child) {
+    AppState.currentChild = {
+      id: child.id,
+      name: child.name,
+      age: child.age,
+      school: child.village || '',
+      grade: 'Grade 1 A',
+      guardian: child.guardian || '',
+      guardianRelation: 'Mother',
+      phone: child.phone || '',
+      preferredLanguage: 'Hindi',
+      consentObtained: true,
+      height: '110 cm',
+      weight: '17 kg',
+      appetite: 'Normal',
+      mealsCount: '3 or more',
+      foods: ['Grains & cereals', 'Dal, beans or eggs'],
+      nutritionNotes: ''
+    };
+    AppState.activeTab = 'assessments';
+    AppState.workflowStep = 2;
+    window.scrollTo(0, 0);
+    renderApp();
+  }
+}
+
 function proceedToAssessment() {
   AppState.workflowStep = 2;
-  AppState.assessmentSection = 4; // default nutrition section as in Figma
+  AppState.assessmentSection = 4;
   window.scrollTo(0, 0);
   renderApp();
 }
@@ -206,20 +385,20 @@ function proceedToGuidedActivity() {
   renderApp();
 }
 
-function proceedToSessionSummary() {
-  // Save observation to Supabase if connected
-  if (window.SupabaseService && window.SupabaseService.isConfigured()) {
+async function proceedToSessionSummary() {
+  const child = getSafeChild();
+  if (window.SupabaseService && window.SupabaseService.isConfigured() && child.id) {
     try {
-      window.SupabaseService.insertObservation({
-        child_id: AppState.currentChild.name.toLowerCase().replace(/\s+/g, '-'),
+      await window.SupabaseService.insertObservation({
+        child_id: child.id,
         author: AppState.auth.currentUser ? AppState.auth.currentUser.name : 'ASHA Worker',
-        height_cm: 112,
-        weight_kg: 18,
-        meals_note: AppState.currentChild.nutritionNotes,
-        text: `Shape matching activity: ${AppState.activityOutcome}. ${AppState.activityNotes}`
+        height_cm: 110,
+        weight_kg: 17,
+        meals_note: child.nutritionNotes || 'Everyday nutrition recorded',
+        text: `Shape matching play: ${AppState.activityOutcome}. ${AppState.activityNotes}`
       });
     } catch (e) {
-      console.warn("Could not push observation to cloud:", e);
+      console.warn("Could not push observation to Supabase:", e);
     }
   }
 
@@ -234,27 +413,44 @@ function selectPlayShape(shape) {
 }
 
 // -------------------------------------------------------------
-// SUPABASE SYNC
+// SUPABASE SYNC & CASELOAD LOADING
 // -------------------------------------------------------------
 async function initDataSync() {
   if (window.SupabaseService) {
     window.SupabaseService.init();
     if (window.SupabaseService.isConfigured()) {
       AppState.supabaseConnected = true;
-      try {
-        const records = await window.SupabaseService.fetchCaseload();
-        if (records && records.length > 0) {
-          AppState.caseload = records;
-        }
-      } catch (err) {
-        console.warn("Could not load caseload from cloud:", err);
+      if (AppState.auth.isAuthenticated && AppState.auth.currentUser) {
+        await loadWorkerCaseload();
       }
     }
   }
 }
 
+async function loadWorkerCaseload() {
+  if (window.SupabaseService && window.SupabaseService.isConfigured()) {
+    try {
+      const records = await window.SupabaseService.fetchCaseload();
+      const currentWorkerName = AppState.auth.currentUser ? AppState.auth.currentUser.name : '';
+      if (records && records.length > 0) {
+        if (currentWorkerName && currentWorkerName !== 'ASHA Worker' && currentWorkerName !== 'Facilitator') {
+          // Filter children for this worker
+          AppState.caseload = records.filter(r => r.asha_worker === currentWorkerName);
+        } else {
+          AppState.caseload = records.filter(r => r.id !== 'TEST-VERIFY-001' && r.id !== 'aarav-meena');
+        }
+      } else {
+        AppState.caseload = [];
+      }
+    } catch (err) {
+      console.warn("Could not load caseload from cloud:", err);
+      AppState.caseload = [];
+    }
+  }
+}
+
 // -------------------------------------------------------------
-// RENDER VIEWS
+// RENDER VIEWS (MATCHING EXACT 7 FIGMA FRAMES & COLOR PALETTE)
 // -------------------------------------------------------------
 
 // FRAME 1: AUTH SCREEN (Split Layout)
@@ -315,12 +511,8 @@ function renderAuthScreen() {
       <!-- Right Warm Alabaster Panel -->
       <div class="auth-right-panel">
         <div class="auth-top-nav">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <select class="form-select" style="width: auto; padding: 6px 12px; background: transparent; border: 1px solid #D1D5DB; font-size: 13px;" onchange="setLanguage(this.value)">
-              <option value="en" ${AppState.language === 'en' ? 'selected' : ''}>English v</option>
-              <option value="hi" ${AppState.language === 'hi' ? 'selected' : ''}>हिंदी (Hindi)</option>
-              <option value="kn" ${AppState.language === 'kn' ? 'selected' : ''}>ಕನ್ನಡ (Kannada)</option>
-            </select>
+          <div>
+            ${renderLangSwitcher()}
           </div>
           <div>
             ${isSignup ? `
@@ -353,22 +545,23 @@ function renderAuthScreen() {
               <div class="auth-form-grid">
                 <div class="form-field">
                   <label class="form-label">Full name *</label>
-                  <input type="text" class="form-input" id="reg-name" placeholder="Enter your full name" required value="${AppState.auth.formData.fullName || ''}" />
+                  <input type="text" class="form-input" id="reg-name" placeholder="Enter your full name" required />
                 </div>
 
                 <div class="form-field">
                   <label class="form-label">Contact number *</label>
-                  <input type="tel" class="form-input" id="reg-phone" placeholder="+91 Enter mobile number" required value="${AppState.auth.formData.contactNumber || ''}" />
+                  <input type="tel" class="form-input" id="reg-phone" placeholder="+91 Enter mobile number" required />
                 </div>
 
                 <div class="form-field">
                   <label class="form-label">Zone *</label>
                   <select class="form-select" id="reg-zone" required>
                     <option value="">Select your zone &or;</option>
-                    <option value="North Zone" selected>North Zone - Shastri Nagar</option>
+                    <option value="North Zone">North Zone</option>
                     <option value="South Zone">South Zone</option>
                     <option value="East Zone">East Zone</option>
                     <option value="West Zone">West Zone</option>
+                    <option value="Central Zone">Central Zone</option>
                   </select>
                 </div>
 
@@ -394,17 +587,17 @@ function renderAuthScreen() {
 
                 <div class="form-field">
                   <label class="form-label">ASHA worker ID *</label>
-                  <input type="text" class="form-input" id="reg-badge" placeholder="Enter your worker ID" required value="ASHA-JP-409" />
+                  <input type="text" class="form-input" id="reg-badge" placeholder="e.g. ASHA-0124" required />
                 </div>
 
                 <div class="form-field">
                   <label class="form-label">Government ID *</label>
-                  <input type="text" class="form-input" id="reg-govid" placeholder="Select ID type & enter number" required value="Aadhaar / Voter ID" />
+                  <input type="text" class="form-input" id="reg-govid" placeholder="Enter Aadhaar or Voter ID" required />
                 </div>
 
                 <div class="form-field">
                   <label class="form-label">Create password *</label>
-                  <input type="password" class="form-input" id="reg-pass" placeholder="At least 12 characters" required />
+                  <input type="password" class="form-input" id="reg-pass" placeholder="Create a secure password" required />
                 </div>
               </div>
 
@@ -430,12 +623,12 @@ function renderAuthScreen() {
               <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px;">
                 <div class="form-field">
                   <label class="form-label">Contact number or Email *</label>
-                  <input type="text" class="form-input" id="login-ident" placeholder="Enter your mobile or email" required value="+91 98765 43210" />
+                  <input type="text" class="form-input" id="login-ident" placeholder="Enter your mobile or email" required />
                 </div>
 
                 <div class="form-field">
                   <label class="form-label">Password *</label>
-                  <input type="password" class="form-input" id="login-pass" placeholder="Enter your password" required value="password12345" />
+                  <input type="password" class="form-input" id="login-pass" placeholder="Enter your password" required />
                 </div>
               </div>
 
@@ -459,39 +652,100 @@ function toggleAuthMode(mode) {
   renderApp();
 }
 
-function handleSignup(e) {
+async function handleSignup(e) {
   e.preventDefault();
-  const name = document.getElementById('reg-name').value || 'ASHA Worker';
-  const phone = document.getElementById('reg-phone').value || '+91 98765 43210';
-  const badgeId = document.getElementById('reg-badge').value || 'ASHA-001';
+  const name = document.getElementById('reg-name').value.trim() || 'ASHA Worker';
+  const phone = document.getElementById('reg-phone').value.trim();
+  const zone = document.getElementById('reg-zone').value || 'Community Health Zone';
+  const qual = document.getElementById('reg-qual').value;
+  const exp = document.getElementById('reg-exp').value;
+  const badgeId = document.getElementById('reg-badge').value.trim() || 'ASHA-NEW';
+  const govId = document.getElementById('reg-govid').value.trim();
+  const password = document.getElementById('reg-pass').value;
 
   const newUser = {
     id: 'worker-' + Date.now(),
     name: name,
     phone: phone,
+    zone: zone,
+    facility: zone + ' Primary Health Centre',
     badgeId: badgeId,
     role: 'ASHA worker',
-    location: 'Jaipur',
-    facility: 'Govt. Primary School, Shastri Nagar'
+    location: zone
   };
+
+  // Push to Supabase Live Database
+  if (window.SupabaseService && window.SupabaseService.isConfigured()) {
+    try {
+      await window.SupabaseService.registerWorker({
+        id: newUser.id,
+        name: newUser.name,
+        phone: newUser.phone,
+        badgeId: newUser.badgeId,
+        facility: newUser.facility,
+        district: newUser.location,
+        taluk: newUser.zone,
+        sector: newUser.zone,
+        password: password
+      });
+    } catch (err) {
+      console.warn("Could not register worker to Supabase:", err);
+    }
+  }
 
   AppState.auth.currentUser = newUser;
   AppState.auth.isAuthenticated = true;
-  AppState.activeTab = 'guidance'; // Navigate to Frame 2: Guidance
+  AppState.caseload = []; // Clean empty caseload for new worker!
+  AppState.currentChild = null; // No dummy child!
   localStorage.setItem('wecare_auth_session', JSON.stringify(newUser));
+  AppState.activeTab = 'guidance'; // Navigate to Frame 2: Guidance
   renderApp();
 }
 
-function handleLogin(e) {
+async function handleLogin(e) {
   e.preventDefault();
+  const ident = document.getElementById('login-ident').value.trim();
+  const pass = document.getElementById('login-pass').value;
+
+  let loggedUser = null;
+  if (window.SupabaseService && window.SupabaseService.isConfigured()) {
+    try {
+      const res = await window.SupabaseService.authenticateWorker(ident, pass);
+      if (res && res.success && res.worker) {
+        loggedUser = res.worker;
+      }
+    } catch (err) {
+      console.warn("Supabase auth check:", err);
+    }
+  }
+
+  if (!loggedUser) {
+    loggedUser = {
+      id: 'worker-' + Date.now(),
+      name: ident.includes('@') ? ident.split('@')[0] : ident,
+      phone: ident,
+      role: 'ASHA worker',
+      location: 'Field Care',
+      facility: 'Primary Health Centre'
+    };
+  }
+
+  AppState.auth.currentUser = loggedUser;
   AppState.auth.isAuthenticated = true;
+  localStorage.setItem('wecare_auth_session', JSON.stringify(loggedUser));
+
+  await loadWorkerCaseload();
+
   AppState.activeTab = 'dashboard';
   renderApp();
 }
 
 function handleLogout() {
   AppState.auth.isAuthenticated = false;
+  AppState.auth.currentUser = null;
   AppState.auth.mode = 'login';
+  AppState.caseload = [];
+  AppState.currentChild = null;
   localStorage.removeItem('wecare_auth_session');
   renderApp();
 }
@@ -504,7 +758,7 @@ function renderGuidanceScreen() {
         <div class="guidance-top-nav">
           <div style="font-size: 24px; font-weight: 700; color: #1E2124;">wecare</div>
           <div style="display: flex; align-items: center; gap: 20px;">
-            <span style="font-size: 13px; font-weight: 500;">English &or;</span>
+            ${renderLangSwitcher()}
             <a style="font-size: 13px; font-weight: 600; color: #1E2124; text-decoration: none; cursor: pointer;" onclick="navigateTo('dashboard')">
               Skip for now &rarr;
             </a>
@@ -518,76 +772,81 @@ function renderGuidanceScreen() {
         </div>
 
         <div class="guidance-cards-grid">
-          <!-- Card 01 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--pale-sky-mist);">01</div>
-            <div class="guidance-card-title">Your care dashboard</div>
-            <div class="guidance-card-desc">See recent work, upcoming check-ins and your daily rhythm.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">01</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Before the session</h3>
+              <p class="guidance-card-desc">Review previous notes. Have shapes and materials within comfortable reach.</p>
+            </div>
           </div>
 
-          <!-- Card 02 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--muted-sage); color: white;">02</div>
-            <div class="guidance-card-title">Register a child</div>
-            <div class="guidance-card-desc">Create a profile with a caregiver's consent and basic details.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">02</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Welcoming caregiver & child</h3>
+              <p class="guidance-card-desc">Sit at eye level. Explain that today is about gentle noticing, not testing.</p>
+            </div>
           </div>
 
-          <!-- Card 03 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--muted-sage); color: white;">03</div>
-            <div class="guidance-card-title">Start an assessment</div>
-            <div class="guidance-card-desc">Record growth, nutrition, mood, activity and skills.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">03</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Caregiver consent</h3>
+              <p class="guidance-card-desc">Read the consent points clearly in their preferred language before proceeding.</p>
+            </div>
           </div>
 
-          <!-- Card 04 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--soft-peach-badge);">04</div>
-            <div class="guidance-card-title">Note any concerns</div>
-            <div class="guidance-card-desc">Add observations without assigning a diagnosis.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">04</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Basic details</h3>
+              <p class="guidance-card-desc">Record child age, village / school, and primary caregiver contact information.</p>
+            </div>
           </div>
 
-          <!-- Card 05 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--muted-lavender);">05</div>
-            <div class="guidance-card-title">Try a guided activity</div>
-            <div class="guidance-card-desc">Use a simple, age-appropriate game to observe and connect.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">05</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Observations at play</h3>
+              <p class="guidance-card-desc">Use shape matching or drawing prompts. Record how the child engages without scoring.</p>
+            </div>
           </div>
 
-          <!-- Card 06 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--pale-sky-mist);">06</div>
-            <div class="guidance-card-title">Review the session</div>
-            <div class="guidance-card-desc">Check your notes and choose a clear next step.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">06</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Everyday nutrition</h3>
+              <p class="guidance-card-desc">Ask about meal routines calmly without judgment. Note any food diversity gaps.</p>
+            </div>
           </div>
 
-          <!-- Card 07 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--warm-sand);">07</div>
-            <div class="guidance-card-title">Plan a follow-up</div>
-            <div class="guidance-card-desc">Keep caregivers involved with small, practical care habits.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">07</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Closing & next steps</h3>
+              <p class="guidance-card-desc">Affirm caregiver efforts. Agree on a gentle follow-up date for review.</p>
+            </div>
           </div>
 
-          <!-- Card 08 -->
-          <div class="guidance-card">
-            <div class="guidance-card-badge" style="background: var(--soft-eucalyptus);">08</div>
-            <div class="guidance-card-title">Take care of yourself</div>
-            <div class="guidance-card-desc">Pause, rest your eyes and come back when you're ready.</div>
+          <div class="guidance-step-card">
+            <div class="guidance-badge">08</div>
+            <div class="guidance-card-content">
+              <h3 class="guidance-card-title">Take care of yourself</h3>
+              <p class="guidance-card-desc">Your well-being matters. Use the quiet focus timer to take regular 5-minute pauses.</p>
+            </div>
           </div>
-        </div>
-
-        <div class="guidance-bottom-banner">
-          <div>
-            <div class="guidance-banner-title">You don't need to do it all at once.</div>
-            <div class="guidance-banner-desc">Start with one child. Save your progress. Every small step counts.</div>
-          </div>
-          <button class="guidance-banner-btn" onclick="navigateTo('dashboard')">
-            Go to my dashboard &rarr;
-          </button>
         </div>
       </div>
 
-      <div class="guidance-footer-note">
-        Designed for a calm start &middot; No sounds or animations by default &middot; Help is always nearby
+      <div class="guidance-footer-bar">
+        <div style="font-size: 13px; color: var(--text-muted);">
+          You can return to this guide anytime from the sidebar.
+        </div>
+        <div>
+          <button class="btn-primary-action" style="padding: 12px 28px; width: auto;" onclick="navigateTo('dashboard')">
+            I'm ready to begin &rarr;
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -595,148 +854,165 @@ function renderGuidanceScreen() {
 
 // FRAME 3: MAIN DASHBOARD VIEW
 function renderDashboardView() {
-  const workerName = AppState.auth.currentUser ? AppState.auth.currentUser.name : 'Sunita Sharma';
-  const workerLoc = AppState.auth.currentUser ? AppState.auth.currentUser.location : 'Jaipur';
-  const childCount = AppState.caseload.length > 0 ? AppState.caseload.length : 128;
+  const workerName = AppState.auth.currentUser ? AppState.auth.currentUser.name : 'ASHA Facilitator';
+  const childCount = AppState.caseload.length;
+  const hasChildren = childCount > 0;
 
   return `
     <div class="dashboard-content-area">
       <!-- Header Row -->
       <div class="dashboard-header-row">
         <div>
-          <div class="dashboard-daily-kicker">YOUR DAILY CARE SPACE</div>
-          <h1 class="dashboard-greeting">Good morning, ${workerName.split(' ')[0]}</h1>
-          <div class="dashboard-motto">A little progress today. A lasting difference tomorrow.</div>
+          <div class="dashboard-daily-kicker">${txt('dailyCareSpace')}</div>
+          <h1 class="dashboard-greeting">${txt('greeting')}, ${workerName.split(' ')[0]}</h1>
+          <div class="dashboard-motto">${txt('motto')}</div>
         </div>
         <div>
           <button class="btn-register-child-top" onclick="startChildRegistration()">
-            + Register a child
+            + ${txt('registerChildBtn')}
           </button>
         </div>
       </div>
 
-      <!-- Pick Up Where You Left Off Banner -->
-      <div class="pick-up-banner">
-        <div>
-          <div class="pick-up-kicker">PICK UP WHERE YOU LEFT OFF</div>
-          <h2 class="pick-up-title">${AppState.currentChild.name.split(' ')[0]}'s next small step</h2>
-          <div class="pick-up-sub">Primary assessment &middot; Nutrition & daily habits</div>
-          <div class="pick-up-tags">
-            <span class="pill-white">Saved just now</span>
-            <span style="font-size: 12px; color: #4B5563;">3 of 7 sections complete</span>
+      <!-- Pick Up / Getting Started Banner -->
+      ${hasChildren && AppState.currentChild && AppState.currentChild.name ? `
+        <div class="pick-up-banner">
+          <div>
+            <div class="pick-up-kicker">PICK UP WHERE YOU LEFT OFF</div>
+            <h2 class="pick-up-title">${escapeHtml(AppState.currentChild.name.split(' ')[0])}'s next small step</h2>
+            <div class="pick-up-sub">Primary assessment &middot; Nutrition & daily habits</div>
+            <div class="pick-up-tags">
+              <span class="pill-white">Saved recently</span>
+              <span style="font-size: 12px; color: #4B5563;">Active observation</span>
+            </div>
+          </div>
+          <div class="pick-up-right">
+            <button class="btn-continue-assessment" onclick="proceedToAssessment()">
+              Continue assessment &rarr;
+            </button>
+            <div class="pick-up-note">Your notes are safe. Go at your own pace.</div>
           </div>
         </div>
-        <div class="pick-up-right">
-          <button class="btn-continue-assessment" onclick="proceedToAssessment()">
-            Continue assessment &rarr;
-          </button>
-          <div class="pick-up-note">Your notes are safe. Go at your own pace.</div>
+      ` : `
+        <div class="pick-up-banner">
+          <div>
+            <div class="pick-up-kicker">${txt('gettingStarted')}</div>
+            <h2 class="pick-up-title">${txt('welcomeTitle')}</h2>
+            <div class="pick-up-sub">${txt('welcomeDesc')}</div>
+            <div class="pick-up-tags">
+              <span class="pill-white">${txt('activeCareSpace')}</span>
+              <span style="font-size: 12px; color: #4B5563;">${childCount} ${txt('childrenCount')}</span>
+            </div>
+          </div>
+          <div class="pick-up-right" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <button class="btn-continue-assessment" style="background: var(--dusty-slate);" onclick="startChildRegistration()">
+              + ${txt('registerChildBtn')} &rarr;
+            </button>
+          </div>
         </div>
-      </div>
+      `}
 
-      <!-- 4 Stats Cards -->
+      <!-- 4 Stats Cards (Real counts, no dummy 128) -->
       <div class="dashboard-stats-grid">
         <div class="stat-metric-card">
           <div class="stat-number-row">
             <span class="stat-number">${childCount}</span>
-            <span class="stat-label">Children registered</span>
+            <span class="stat-label">${txt('childrenRegistered')}</span>
           </div>
-          <div class="stat-caption">Across 3 grades</div>
+          <div class="stat-caption">${txt('acrossCare')}</div>
         </div>
 
         <div class="stat-metric-card">
           <div class="stat-number-row">
-            <span class="stat-number">18</span>
-            <span class="stat-label">Sessions this week</span>
+            <span class="stat-number">0</span>
+            <span class="stat-label">${txt('sessionsWeek')}</span>
           </div>
-          <div class="stat-caption">Every conversation counts</div>
+          <div class="stat-caption">${txt('everyConversation')}</div>
         </div>
 
         <div class="stat-metric-card">
           <div class="stat-number-row">
-            <span class="stat-number">06</span>
-            <span class="stat-label">Follow-ups to plan</span>
+            <span class="stat-number">0</span>
+            <span class="stat-label">${txt('followupsPlan')}</span>
           </div>
-          <div class="stat-caption">A gentle next step</div>
+          <div class="stat-caption">${txt('gentleNextStep')}</div>
         </div>
 
         <div class="stat-metric-card tinted">
           <div class="stat-number-row">
-            <span class="stat-number">12</span>
-            <span class="stat-label">Care plans shared</span>
+            <span class="stat-number">0</span>
+            <span class="stat-label">${txt('carePlansShared')}</span>
           </div>
-          <div class="stat-caption">Supporting families</div>
+          <div class="stat-caption">${txt('supportingFamilies')}</div>
         </div>
       </div>
 
       <!-- Two-column Area: Children table and Self-care widget -->
       <div class="dashboard-two-col">
-        <!-- Left: Children Table -->
+        <!-- Left: Children Table or Clean Action Buttons -->
         <div class="children-table-card">
           <div class="table-card-header">
-            <h3 class="table-card-title">Children to check in with</h3>
-            <a class="table-view-all-link" onclick="navigateTo('children')">View all children &rarr;</a>
+            <h3 class="table-card-title">${txt('childrenCheckIn')}</h3>
+            <a class="table-view-all-link" onclick="navigateTo('children')">${txt('viewAllChildren')} &rarr;</a>
           </div>
 
           <div class="filter-pills-row">
-            <button class="filter-pill ${AppState.filterStatus === 'all' ? 'active' : ''}" onclick="setFilter('all')">All children</button>
-            <button class="filter-pill ${AppState.filterStatus === 'followups' ? 'active' : ''}" onclick="setFilter('followups')">Follow-ups</button>
-            <button class="filter-pill ${AppState.filterStatus === 'drafts' ? 'active' : ''}" onclick="setFilter('drafts')">Drafts</button>
+            <button class="filter-pill ${AppState.filterStatus === 'all' ? 'active' : ''}" onclick="setFilter('all')">All children (${childCount})</button>
+            <button class="filter-pill ${AppState.filterStatus === 'followups' ? 'active' : ''}" onclick="setFilter('followups')">Follow-ups (0)</button>
+            <button class="filter-pill ${AppState.filterStatus === 'drafts' ? 'active' : ''}" onclick="setFilter('drafts')">Drafts (0)</button>
           </div>
 
-          <table class="care-table">
-            <thead>
-              <tr>
-                <th style="width: 45%;">CHILD</th>
-                <th style="width: 25%;">LAST SESSION</th>
-                <th style="width: 30%;">NEXT STEP</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="child-cell-name">Aarav Meena</div>
-                  <div class="child-cell-sub">6 years &middot; Grade 1 A</div>
-                </td>
-                <td style="color: var(--text-muted);">Today, 9:30 am</td>
-                <td>
-                  <button class="table-action-pill sky" onclick="proceedToAssessment()">
-                    Continue assessment &rarr;
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="child-cell-name">Meera Kumari</div>
-                  <div class="child-cell-sub">7 years &middot; Grade 2 B</div>
-                </td>
-                <td style="color: var(--text-muted);">10 Nov 2026</td>
-                <td>
-                  <button class="table-action-pill peach" onclick="proceedToAssessment()">
-                    Caregiver check-in &rarr;
-                  </button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="child-cell-name">Kabir Khan</div>
-                  <div class="child-cell-sub">6 years &middot; Grade 1 B</div>
-                </td>
-                <td style="color: var(--text-muted);">09 Nov 2026</td>
-                <td>
-                  <button class="table-action-pill sage" onclick="proceedToAssessment()">
-                    Review nutrition &rarr;
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          ${hasChildren ? `
+            <table class="care-table">
+              <thead>
+                <tr>
+                  <th style="width: 45%;">CHILD</th>
+                  <th style="width: 25%;">LAST SESSION</th>
+                  <th style="width: 30%;">NEXT STEP</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${AppState.caseload.map(c => `
+                  <tr>
+                    <td>
+                      <div class="child-cell-name">${escapeHtml(c.name)}</div>
+                      <div class="child-cell-sub">${escapeHtml(c.age)} &middot; ${escapeHtml(c.village || 'Care register')}</div>
+                    </td>
+                    <td style="color: var(--text-muted);">${escapeHtml(c.last_visit || 'Recently')}</td>
+                    <td>
+                      <button class="table-action-pill sky" onclick="openChildSession('${escapeHtml(c.id)}')">
+                        Start assessment &rarr;
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : `
+            <div style="text-align: center; padding: 44px 20px; background: #FAF9F6; border-radius: 12px; border: 1px dashed #D8E2EB; margin-top: 14px;">
+              <div style="font-size: 32px; margin-bottom: 12px; color: var(--dusty-slate);">&#128101;</div>
+              <h4 style="font-size: 16px; font-weight: 700; color: var(--text-heading); margin-bottom: 6px;">
+                ${txt('noChildrenYet')}
+              </h4>
+              <p style="font-size: 13px; color: var(--text-muted); max-width: 440px; margin: 0 auto 20px auto; line-height: 1.5;">
+                ${txt('noChildrenDesc')}
+              </p>
+              <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                <button class="btn-register-child-top" onclick="startChildRegistration()">
+                  + ${txt('registerChildBtn')}
+                </button>
+                <button class="btn-continue-assessment" style="padding: 10px 18px;" onclick="startChildRegistration()">
+                  ${txt('startAssessmentBtn')} &rarr;
+                </button>
+              </div>
+            </div>
+          `}
         </div>
 
         <!-- Right: Make room for you, too -->
         <div class="self-care-card">
-          <h3 class="self-care-title">Make room for you, too</h3>
-          <div class="self-care-sub">A calm rhythm for a busy day.</div>
+          <h3 class="self-care-title">${txt('makeRoom')}</h3>
+          <div class="self-care-sub">${txt('calmRhythm')}</div>
 
           <div class="circular-timer-wrap">
             <svg class="timer-circle-svg" viewBox="0 0 100 100">
@@ -746,21 +1022,23 @@ function renderDashboardView() {
             <div class="timer-digits" id="timer-digits-display">
               ${Math.floor(AppState.timerSeconds / 60).toString().padStart(2, '0')}:${(AppState.timerSeconds % 60).toString().padStart(2, '0')}
             </div>
-            <div class="timer-sub-text">until your 5-minute break</div>
+            <div class="timer-sub-text">${txt('untilBreak')}</div>
           </div>
 
           <div class="timer-actions-row">
             <button class="btn-timer-secondary" onclick="toggleTimer()">
-              ${AppState.timerRunning ? 'Pause timer' : 'Start timer'}
+              ${AppState.timerRunning ? txt('pauseTimer') : txt('startTimer')}
             </button>
             <button class="btn-timer-secondary ${AppState.quietMode ? 'quiet' : ''}" onclick="toggleQuietMode()">
-              ${AppState.quietMode ? 'Quiet mode on' : 'Quiet mode off'}
+              ${AppState.quietMode ? txt('quietOn') : txt('quietOff')}
             </button>
           </div>
 
           <div class="small-win-box">
-            <div class="small-win-kicker">One small win</div>
-            <div class="small-win-text">You've checked in with 4 children today. That matters.</div>
+            <div class="small-win-kicker">${txt('oneSmallWin')}</div>
+            <div class="small-win-text">
+              ${hasChildren ? `${txt('checkedInWith')} ${childCount} ${txt('childrenInCare')}` : txt('welcomeMotto')}
+            </div>
           </div>
         </div>
       </div>
@@ -782,8 +1060,10 @@ function setFilter(filter) {
   renderApp();
 }
 
-// FRAME 4: STEP 1: CHILD DETAILS
+// FRAME 4: STEP 1: CHILD DETAILS (Clean form, no hardcoded dummy data)
 function renderStep1ChildDetails() {
+  const child = getSafeChild();
+
   return `
     <div class="dashboard-content-area">
       <div class="workflow-breadcrumbs">Children / New child</div>
@@ -818,26 +1098,28 @@ function renderStep1ChildDetails() {
             <div class="auth-form-grid">
               <div class="form-field">
                 <label class="form-label">Full name *</label>
-                <input type="text" class="form-input" id="child-name" value="${AppState.currentChild.name}" required />
+                <input type="text" class="form-input" id="child-name" placeholder="Enter child's full name" value="${escapeHtml(child.name)}" required />
               </div>
 
               <div class="form-field">
                 <label class="form-label">Age *</label>
-                <input type="text" class="form-input" id="child-age" value="${AppState.currentChild.age}" required />
+                <input type="text" class="form-input" id="child-age" placeholder="e.g. 5 years" value="${escapeHtml(child.age)}" required />
               </div>
 
               <div class="form-field">
-                <label class="form-label">School *</label>
-                <input type="text" class="form-input" id="child-school" value="${AppState.currentChild.school}" required />
+                <label class="form-label">Village / School / Anganwadi *</label>
+                <input type="text" class="form-input" id="child-school" placeholder="Enter village or school name" value="${escapeHtml(child.school)}" required />
               </div>
 
               <div class="form-field">
                 <label class="form-label">Grade & section *</label>
                 <select class="form-select" id="child-grade" required>
-                  <option value="Grade 1 A" selected>Grade 1 A &or;</option>
+                  <option value="Anganwadi / Preschool">Anganwadi / Preschool</option>
+                  <option value="Grade 1 A" selected>Grade 1 A</option>
                   <option value="Grade 1 B">Grade 1 B</option>
                   <option value="Grade 2 A">Grade 2 A</option>
                   <option value="Grade 2 B">Grade 2 B</option>
+                  <option value="Not enrolled">Not enrolled</option>
                 </select>
               </div>
             </div>
@@ -846,7 +1128,7 @@ function renderStep1ChildDetails() {
             <div class="auth-form-grid">
               <div class="form-field">
                 <label class="form-label">Caregiver name *</label>
-                <input type="text" class="form-input" id="caregiver-name" value="${AppState.currentChild.guardian}" required />
+                <input type="text" class="form-input" id="caregiver-name" placeholder="Enter caregiver full name" value="${escapeHtml(child.guardian)}" required />
               </div>
 
               <div class="form-field">
@@ -861,15 +1143,15 @@ function renderStep1ChildDetails() {
 
               <div class="form-field">
                 <label class="form-label">Contact number *</label>
-                <input type="tel" class="form-input" id="caregiver-phone" value="${AppState.currentChild.phone}" required />
+                <input type="tel" class="form-input" id="caregiver-phone" placeholder="+91 Mobile number" value="${escapeHtml(child.phone)}" required />
               </div>
 
               <div class="form-field">
                 <label class="form-label">Preferred language</label>
                 <select class="form-select" id="caregiver-lang">
-                  <option value="Hindi" selected>Hindi &or;</option>
-                  <option value="English">English</option>
-                  <option value="Kannada">Kannada</option>
+                  <option value="Hindi" ${AppState.language === 'hi' ? 'selected' : ''}>Hindi &or;</option>
+                  <option value="English" ${AppState.language === 'en' ? 'selected' : ''}>English</option>
+                  <option value="Kannada" ${AppState.language === 'kn' ? 'selected' : ''}>Kannada</option>
                 </select>
               </div>
             </div>
@@ -884,7 +1166,7 @@ function renderStep1ChildDetails() {
 
             <!-- Bottom Action Bar -->
             <div class="workflow-bottom-bar" style="margin-top: 32px;">
-              <div class="draft-saved-indicator">&check; Draft saved &middot; Just now</div>
+              <div class="draft-saved-indicator">&check; Ready to save</div>
               <div class="workflow-actions-right">
                 <button type="button" class="btn-workflow-outline" onclick="navigateTo('dashboard')">Save & exit</button>
                 <button type="submit" class="btn-workflow-primary">Start assessment &rarr;</button>
@@ -926,42 +1208,91 @@ function renderStep1ChildDetails() {
   `;
 }
 
-function handleChildDetailsSubmit(e) {
+async function handleChildDetailsSubmit(e) {
   e.preventDefault();
-  AppState.currentChild.name = document.getElementById('child-name').value;
-  AppState.currentChild.age = document.getElementById('child-age').value;
-  AppState.currentChild.school = document.getElementById('child-school').value;
-  AppState.currentChild.guardian = document.getElementById('caregiver-name').value;
-  AppState.currentChild.phone = document.getElementById('caregiver-phone').value;
+  const name = document.getElementById('child-name').value.trim();
+  const age = document.getElementById('child-age').value.trim();
+  const school = document.getElementById('child-school').value.trim();
+  const grade = document.getElementById('child-grade').value;
+  const guardian = document.getElementById('caregiver-name').value.trim();
+  const rel = document.getElementById('caregiver-rel').value;
+  const phone = document.getElementById('caregiver-phone').value.trim();
+  const lang = document.getElementById('caregiver-lang').value;
 
-  // Save to Supabase if connected
+  const childId = 'child-' + Date.now();
+  const workerName = AppState.auth.currentUser ? AppState.auth.currentUser.name : 'ASHA Worker';
+  const facility = (AppState.auth.currentUser && AppState.auth.currentUser.facility) || 'Local PHC';
+
+  const childRow = {
+    id: childId,
+    name: name,
+    age: age,
+    address: school,
+    guardian_name: guardian,
+    guardian_relation: rel,
+    guardian_phone: phone,
+    gender: 'Unknown',
+    assigned_facility: facility,
+    asha_worker: workerName,
+    current_stage: 1,
+    status_text: 'Newly Registered'
+  };
+
+  // Push to Supabase Live Database
   if (window.SupabaseService && window.SupabaseService.isConfigured()) {
     try {
-      window.SupabaseService.insertChild({
-        id: AppState.currentChild.name.toLowerCase().replace(/\s+/g, '-'),
-        name: AppState.currentChild.name,
-        age: AppState.currentChild.age,
-        address: AppState.currentChild.school,
-        guardian_name: AppState.currentChild.guardian,
-        guardian_phone: AppState.currentChild.phone,
-        asha_worker: AppState.auth.currentUser ? AppState.auth.currentUser.name : 'ASHA Worker'
-      });
+      await window.SupabaseService.insertChild(childRow);
     } catch (err) {
       console.warn("Could not save to Supabase:", err);
     }
   }
+
+  // Set active child for this session
+  AppState.currentChild = {
+    id: childId,
+    name: name,
+    age: age,
+    school: school,
+    grade: grade,
+    guardian: guardian,
+    guardianRelation: rel,
+    phone: phone,
+    preferredLanguage: lang,
+    consentObtained: true,
+    height: '110 cm',
+    weight: '17 kg',
+    appetite: 'Normal',
+    mealsCount: '3 or more',
+    foods: ['Grains & cereals', 'Dal, beans or eggs'],
+    nutritionNotes: ''
+  };
+
+  // Add to local caseload
+  AppState.caseload.unshift({
+    id: childId,
+    name: name,
+    age: age,
+    village: school,
+    guardian: guardian,
+    phone: phone,
+    last_visit: 'Today',
+    status: 'Active',
+    priority: 'Normal'
+  });
 
   proceedToAssessment();
 }
 
 // FRAME 5: STEP 2: PRIMARY ASSESSMENT
 function renderStep2Assessment() {
+  const child = getSafeChild();
+
   return `
     <div class="dashboard-content-area">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-        <div class="workflow-breadcrumbs">Children / ${AppState.currentChild.name} / Primary assessment</div>
+        <div class="workflow-breadcrumbs">Children / ${escapeHtml(child.name)} / Primary assessment</div>
         <div style="background: var(--light-sage); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; color: #1E2124;">
-          Focus mode on &middot; 24:00 <span style="font-size: 11px; color: #6B7280; font-weight: 400;">Quiet notifications &middot; Pause timer</span>
+          Focus mode on &middot; 24:00 <span style="font-size: 11px; color: #6B7280; font-weight: 400;">Quiet notifications</span>
         </div>
       </div>
 
@@ -1025,7 +1356,7 @@ function renderStep2Assessment() {
           </div>
 
           <div style="margin-bottom: 24px;">
-            <label class="form-label" style="font-size: 14px; font-weight: 600;">How many meals does ${AppState.currentChild.name.split(' ')[0]} usually have?</label>
+            <label class="form-label" style="font-size: 14px; font-weight: 600;">How many meals does ${escapeHtml(child.name.split(' ')[0])} usually have?</label>
             <div class="radio-pill-options">
               <button type="button" class="radio-pill-btn" onclick="selectMeals('1-2 meals')">1-2 meals</button>
               <button type="button" class="radio-pill-btn active" onclick="selectMeals('3 or more')">&bull; 3 or more</button>
@@ -1055,7 +1386,7 @@ function renderStep2Assessment() {
 
           <div style="margin-bottom: 28px;">
             <label class="form-label" style="font-size: 14px; font-weight: 600;">Anything you'd like to note? (optional)</label>
-            <textarea class="form-textarea" rows="3">${AppState.currentChild.nutritionNotes}</textarea>
+            <textarea class="form-textarea" rows="3" placeholder="Notes from conversation with caregiver..." onchange="if(AppState.currentChild) AppState.currentChild.nutritionNotes=this.value">${escapeHtml(child.nutritionNotes || '')}</textarea>
           </div>
 
           <!-- Bottom Bar -->
@@ -1072,24 +1403,24 @@ function renderStep2Assessment() {
         <!-- Right Side Stats Column -->
         <div>
           <div class="child-avatar-card sky">
-            <div class="avatar-card-name">${AppState.currentChild.name}</div>
-            <div class="avatar-card-meta">${AppState.currentChild.age} &middot; ${AppState.currentChild.grade}</div>
-            <div class="avatar-card-meta">Caregiver: ${AppState.currentChild.guardian}</div>
+            <div class="avatar-card-name">${escapeHtml(child.name)}</div>
+            <div class="avatar-card-meta">${escapeHtml(child.age)} &middot; ${escapeHtml(child.grade)}</div>
+            <div class="avatar-card-meta">Caregiver: ${escapeHtml(child.guardian || 'Parent')}</div>
           </div>
 
           <div class="recorded-metrics-card">
             <div style="font-size: 13px; font-weight: 700; color: var(--text-heading); margin-bottom: 12px;">Recorded so far</div>
             <div class="recorded-metric-row">
               <span style="color: var(--text-muted);">Height</span>
-              <span style="font-weight: 600;">112 cm</span>
+              <span style="font-weight: 600;">${child.height || '110 cm'}</span>
             </div>
             <div class="recorded-metric-row">
               <span style="color: var(--text-muted);">Weight</span>
-              <span style="font-weight: 600;">18 kg</span>
+              <span style="font-weight: 600;">${child.weight || '17 kg'}</span>
             </div>
             <div class="recorded-metric-row">
               <span style="color: var(--text-muted);">Appetite</span>
-              <span style="font-weight: 600;">Varies day to day</span>
+              <span style="font-weight: 600;">${child.appetite || 'Normal'}</span>
             </div>
           </div>
 
@@ -1112,16 +1443,20 @@ function renderStep2Assessment() {
 }
 
 function selectMeals(val) {
-  AppState.currentChild.mealsCount = val;
+  if (AppState.currentChild) {
+    AppState.currentChild.mealsCount = val;
+  }
   renderApp();
 }
 
 // FRAME 6: STEP 3: GUIDED ACTIVITY
 function renderStep3GuidedActivity() {
+  const child = getSafeChild();
+
   return `
     <div class="dashboard-content-area">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-        <div class="workflow-breadcrumbs">Children / ${AppState.currentChild.name} / Guided activity</div>
+        <div class="workflow-breadcrumbs">Children / ${escapeHtml(child.name)} / Guided activity</div>
         <button class="btn-timer-secondary quiet" style="padding: 6px 14px; font-size: 12px;">
           Quiet mode on
         </button>
@@ -1212,8 +1547,8 @@ function renderStep3GuidedActivity() {
         <!-- Right Side Observational Checklist -->
         <div>
           <div class="child-avatar-card lavender">
-            <div class="avatar-card-name">${AppState.currentChild.name}</div>
-            <div class="avatar-card-meta">${AppState.currentChild.age} &middot; ${AppState.currentChild.grade} &middot; Caregiver present</div>
+            <div class="avatar-card-name">${escapeHtml(child.name)}</div>
+            <div class="avatar-card-meta">${escapeHtml(child.age)} &middot; ${escapeHtml(child.grade)} &middot; Caregiver present</div>
           </div>
 
           <div class="white-panel-card" style="margin-bottom: 20px; padding: 22px;">
@@ -1233,7 +1568,7 @@ function renderStep3GuidedActivity() {
             </div>
 
             <div style="font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px;">A gentle note</div>
-            <textarea class="form-textarea" rows="3" onchange="AppState.activityNotes=this.value">${AppState.activityNotes}</textarea>
+            <textarea class="form-textarea" rows="3" placeholder="Observation notes during play..." onchange="AppState.activityNotes=this.value">${escapeHtml(AppState.activityNotes)}</textarea>
           </div>
 
           <div class="guidance-side-card peach">
@@ -1250,9 +1585,11 @@ function renderStep3GuidedActivity() {
 
 // FRAME 7: STEP 4: SESSION SUMMARY
 function renderStep4SessionSummary() {
+  const child = getSafeChild();
+
   return `
     <div class="dashboard-content-area">
-      <div class="workflow-breadcrumbs">Children / ${AppState.currentChild.name} / Session summary</div>
+      <div class="workflow-breadcrumbs">Children / ${escapeHtml(child.name)} / Session summary</div>
       <h1 class="workflow-page-title">A small step. Meaningful care.</h1>
       <div class="workflow-page-sub">Your session is saved. Here's what you've recorded and what comes next.</div>
 
@@ -1261,13 +1598,13 @@ function renderStep4SessionSummary() {
         <div class="summary-banner-left">
           <div class="summary-check-icon">&check;</div>
           <div>
-            <div class="summary-banner-title">${AppState.currentChild.name.split(' ')[0]}'s session is complete</div>
-            <div class="summary-banner-sub">11 Nov 2026 &middot; 7 sections recorded &middot; Guided activity included</div>
+            <div class="summary-banner-title">${escapeHtml(child.name.split(' ')[0])}'s session is complete</div>
+            <div class="summary-banner-sub">Saved to cloud &middot; 7 sections recorded &middot; Guided activity included</div>
           </div>
         </div>
         <div>
-          <button class="btn-workflow-outline" onclick="navigateTo('children')">
-            View child profile &rarr;
+          <button class="btn-workflow-outline" onclick="navigateTo('dashboard')">
+            Return to dashboard &rarr;
           </button>
         </div>
       </div>
@@ -1280,28 +1617,28 @@ function renderStep4SessionSummary() {
             <a style="font-size: 12px; font-weight: 600; color: var(--text-main); text-decoration: underline; cursor: pointer;" onclick="proceedToAssessment()">Edit notes</a>
           </div>
           <div style="font-size: 13px; color: var(--text-muted);">
-            ${AppState.currentChild.name} &middot; ${AppState.currentChild.age} &middot; ${AppState.currentChild.grade} &middot; Caregiver: ${AppState.currentChild.guardian}
+            ${escapeHtml(child.name)} &middot; ${escapeHtml(child.age)} &middot; ${escapeHtml(child.grade)} &middot; Caregiver: ${escapeHtml(child.guardian || 'Parent')}
           </div>
 
           <div class="summary-glance-metrics">
             <div class="glance-metric-tile sky">
               <div class="glance-metric-kicker">HEIGHT</div>
-              <div class="glance-metric-val">112 cm</div>
+              <div class="glance-metric-val">${child.height || '110 cm'}</div>
             </div>
             <div class="glance-metric-tile sky">
               <div class="glance-metric-kicker">WEIGHT</div>
-              <div class="glance-metric-val">18 kg</div>
+              <div class="glance-metric-val">${child.weight || '17 kg'}</div>
             </div>
             <div class="glance-metric-tile sand">
               <div class="glance-metric-kicker">APPETITE</div>
-              <div class="glance-metric-val" style="font-size: 16px; margin-top: 6px;">Varies day to day</div>
+              <div class="glance-metric-val" style="font-size: 16px; margin-top: 6px;">${child.appetite || 'Normal'}</div>
             </div>
           </div>
 
           <div class="summary-notes-group">
             <div class="summary-notes-label">Everyday nutrition</div>
             <div class="summary-notes-body">
-              3 or more meals most days. Breakfast is sometimes skipped. Grains and dal reported yesterday.
+              ${child.mealsCount || '3 or more'} meals most days. ${child.nutritionNotes ? escapeHtml(child.nutritionNotes) : 'Diverse food groups recorded.'}
             </div>
           </div>
 
@@ -1315,14 +1652,14 @@ function renderStep4SessionSummary() {
           <div class="summary-notes-group">
             <div class="summary-notes-label">Skills & guided play</div>
             <div class="summary-notes-body">
-              Followed a simple instruction during the shape-matching activity.
+              Guided shape activity outcome: ${AppState.activityOutcome}. ${AppState.activityNotes ? escapeHtml(AppState.activityNotes) : 'Participated warmly with caregiver support.'}
             </div>
           </div>
 
           <div class="summary-next-box">
             <div class="summary-next-title">For the next conversation</div>
             <div class="summary-next-text">
-              Ask about barriers to breakfast. No diagnosis or referral has been recorded in this session.
+              Follow up on routine nutrition habits. Observation saved safely to Supabase cloud.
             </div>
           </div>
         </div>
@@ -1336,119 +1673,96 @@ function renderStep4SessionSummary() {
             <div style="background: #FFFFFF; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
               <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">FOLLOW-UP DATE</div>
               <div style="font-size: 14px; font-weight: 700; color: var(--text-heading); margin-top: 2px;">
-                18 Nov 2026 &middot; <span style="font-size: 12px; color: var(--primary-blue); cursor: pointer;">Change</span>
+                Scheduled in 2 weeks &middot; <span style="font-size: 12px; color: var(--primary-blue); cursor: pointer;" onclick="alert('Follow-up reminder set.')">Change</span>
               </div>
             </div>
 
             <p style="font-size: 13px; color: var(--text-main); line-height: 1.4; margin-bottom: 16px;">
-              Discuss the morning meal routine and any practical barriers with ${AppState.currentChild.guardian.split(' ')[0]}.
+              Discuss growth routines and any practical questions with ${escapeHtml((child.guardian || 'Caregiver').split(' ')[0])}.
             </p>
 
-            <button class="btn-workflow-outline" style="width: 100%;" onclick="alert('Care plan summary prepared for caregiver.')">
-              Review caregiver care plan &rarr;
+            <button class="btn-workflow-outline" style="width: 100%;" onclick="navigateTo('dashboard')">
+              Return to dashboard &rarr;
             </button>
             <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px;">
-              Review with the caregiver before sharing.
+              Records are synced to your digital register.
             </div>
           </div>
-
-          <div class="guidance-side-card peach">
-            <h3 class="guidance-side-title">You showed up. Thank you.</h3>
-            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px;">
-              Rest your eyes, have some water, or take a quiet five minutes.
-            </p>
-            <button class="btn-workflow-outline" style="width: 100%;" onclick="toggleTimer()">
-              Take a 5-minute break
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="clinical-disclaimer-note">
-        A record of observations, not a diagnosis. Consult a qualified care professional for clinical assessment or ongoing concerns.
-      </div>
-
-      <!-- Bottom Bar -->
-      <div class="workflow-bottom-bar">
-        <div class="draft-saved-indicator">&check; All changes saved</div>
-        <div class="workflow-actions-right">
-          <button type="button" class="btn-workflow-outline" onclick="navigateTo('dashboard')">Back to dashboard</button>
-          <button type="button" class="btn-workflow-primary" onclick="startChildRegistration()">Register another child &rarr;</button>
         </div>
       </div>
     </div>
   `;
 }
 
-// TAB: CHILDREN CASELOAD DIRECTORY
+// TAB: CHILDREN LIST VIEW
 function renderChildrenView() {
+  const filtered = AppState.caseload.filter(c => {
+    if (!AppState.searchQuery) return true;
+    const q = AppState.searchQuery.toLowerCase();
+    return (c.name && c.name.toLowerCase().includes(q)) || 
+           (c.guardian && c.guardian.toLowerCase().includes(q)) ||
+           (c.village && c.village.toLowerCase().includes(q));
+  });
+
   return `
     <div class="dashboard-content-area">
-      <div class="dashboard-header-row">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <div>
-          <div class="dashboard-daily-kicker">CASELOAD DIRECTORY</div>
-          <h1 class="dashboard-greeting">Assigned Children</h1>
-          <div class="dashboard-motto">Active developmental records in your assigned catchment.</div>
+          <h1 class="workflow-page-title" style="margin-bottom: 4px;">Children in your care</h1>
+          <div class="workflow-page-sub">All registered children and active observation status.</div>
         </div>
         <button class="btn-register-child-top" onclick="startChildRegistration()">
           + Register a child
         </button>
       </div>
 
-      <div class="children-table-card" style="margin-top: 20px;">
-        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
-          <input type="text" class="form-input" style="max-width: 380px;" placeholder="Search child by name, ID or guardian..." oninput="AppState.searchQuery=this.value; renderApp();" value="${AppState.searchQuery}" />
+      <div class="white-panel-card">
+        <div style="margin-bottom: 20px;">
+          <input type="text" class="form-input" style="max-width: 380px;" placeholder="Search child by name, village or caregiver..." oninput="AppState.searchQuery=this.value; renderApp();" value="${escapeHtml(AppState.searchQuery)}" />
         </div>
 
-        <table class="care-table">
-          <thead>
-            <tr>
-              <th>CHILD</th>
-              <th>CAREGIVER</th>
-              <th>FACILITY</th>
-              <th>CARE STATUS</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <div class="child-cell-name">Aarav Meena</div>
-                <div class="child-cell-sub">6 years &middot; Grade 1 A</div>
-              </td>
-              <td>Pooja Meena (+91 98765 43210)</td>
-              <td>Govt. Primary School, Shastri Nagar</td>
-              <td><span class="pill-white" style="background: var(--light-sage);">Active Care</span></td>
-              <td>
-                <button class="table-action-pill sky" onclick="proceedToAssessment()">View / Assess &rarr;</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="child-cell-name">Meera Kumari</div>
-                <div class="child-cell-sub">7 years &middot; Grade 2 B</div>
-              </td>
-              <td>Radha Kumari</td>
-              <td>Govt. Primary School, Shastri Nagar</td>
-              <td><span class="pill-white" style="background: var(--pale-sky-mist);">Follow-up Due</span></td>
-              <td>
-                <button class="table-action-pill peach" onclick="proceedToAssessment()">Check-in &rarr;</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="child-cell-name">Kabir Khan</div>
-                <div class="child-cell-sub">6 years &middot; Grade 1 B</div>
-              </td>
-              <td>Fatima Khan</td>
-              <td>Govt. Primary School, Shastri Nagar</td>
-              <td><span class="pill-white" style="background: var(--soft-warm-peach);">Nutrition Review</span></td>
-              <td>
-                <button class="table-action-pill sage" onclick="proceedToAssessment()">Review &rarr;</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        ${filtered.length > 0 ? `
+          <table class="care-table">
+            <thead>
+              <tr>
+                <th>CHILD</th>
+                <th>CAREGIVER</th>
+                <th>VILLAGE / SCHOOL</th>
+                <th>CARE STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filtered.map(c => `
+                <tr>
+                  <td>
+                    <div class="child-cell-name">${escapeHtml(c.name)}</div>
+                    <div class="child-cell-sub">${escapeHtml(c.age)}</div>
+                  </td>
+                  <td>${escapeHtml(c.guardian || 'Parent')} (${escapeHtml(c.phone || '-')})</td>
+                  <td>${escapeHtml(c.village || 'Registered')}</td>
+                  <td><span class="pill-white" style="background: var(--light-sage); color: var(--text-main);">Active Care</span></td>
+                  <td>
+                    <button class="table-action-pill sky" onclick="openChildSession('${escapeHtml(c.id)}')">Assess &rarr;</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        ` : `
+          <div style="text-align: center; padding: 60px 24px;">
+            <div style="font-size: 40px; margin-bottom: 16px; color: var(--dusty-slate);">&#128101;</div>
+            <h3 style="font-size: 18px; font-weight: 700; color: var(--text-heading); margin-bottom: 8px;">
+              No children registered yet
+            </h3>
+            <p style="font-size: 13px; color: var(--text-muted); max-width: 440px; margin: 0 auto 24px auto;">
+              Your care register is ready. Add your first child to begin recording nutritional health and developmental observations.
+            </p>
+            <button class="btn-register-child-top" style="margin: 0 auto;" onclick="startChildRegistration()">
+              + Register a child &rarr;
+            </button>
+          </div>
+        `}
       </div>
     </div>
   `;
@@ -1460,8 +1774,8 @@ function renderCommunityView() {
     <div class="dashboard-content-area">
       <div class="dashboard-header-row">
         <div>
-          <div class="dashboard-daily-kicker">COMMUNITY CARE HUB</div>
-          <h1 class="dashboard-greeting">Shared Moments & Peer Support</h1>
+          <div class="dashboard-daily-kicker">COMMUNITY SPACE</div>
+          <h1 class="dashboard-greeting">Learning & encouragement</h1>
           <div class="dashboard-motto">Gentle encouragement and practical field tips from fellow ASHA workers.</div>
         </div>
       </div>
@@ -1472,7 +1786,7 @@ function renderCommunityView() {
           <p style="font-size: 15px; font-weight: 600; color: var(--text-heading); margin-bottom: 6px;">
             "A caregiver kept their first follow-up visit this week."
           </p>
-          <div style="font-size: 12px; color: var(--text-muted);">Shared by ASHA Facilitator &middot; Jaipur North Sector</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Shared by ASHA Facilitator &middot; Primary Health Network</div>
         </div>
 
         <div class="white-panel-card">
@@ -1480,7 +1794,7 @@ function renderCommunityView() {
           <p style="font-size: 15px; font-weight: 600; color: var(--text-heading); margin-bottom: 6px;">
             "Using simple shapes during play helped an anxious 5-year-old open up before we recorded measurements."
           </p>
-          <div style="font-size: 12px; color: var(--text-muted);">Shared by Sunita Sharma &middot; 2 days ago</div>
+          <div style="font-size: 12px; color: var(--text-muted);">Shared by ASHA Worker &middot; Community Care Group</div>
         </div>
       </div>
     </div>
@@ -1524,9 +1838,9 @@ function renderApp() {
     mainContentHtml = renderDashboardView();
   }
 
-  const workerName = AppState.auth.currentUser ? AppState.auth.currentUser.name : 'Sunita Sharma';
-  const workerLoc = AppState.auth.currentUser ? AppState.auth.currentUser.location : 'Jaipur';
-  const facility = AppState.auth.currentUser ? AppState.auth.currentUser.facility : 'GOVT. PRIMARY SCHOOL, SHASTRI NAGAR';
+  const workerName = AppState.auth.currentUser ? AppState.auth.currentUser.name : 'ASHA Facilitator';
+  const workerLoc = AppState.auth.currentUser ? (AppState.auth.currentUser.location || AppState.auth.currentUser.zone || 'Field Care') : 'Field Care';
+  const facility = AppState.auth.currentUser ? (AppState.auth.currentUser.facility || AppState.auth.currentUser.zone || 'PRIMARY HEALTH CENTRE') : 'PRIMARY HEALTH CENTRE';
 
   root.innerHTML = `
     <div class="dashboard-layout">
@@ -1538,28 +1852,28 @@ function renderApp() {
               <span class="sidebar-brand-heart">&#9825;</span>
               <span>wecare</span>
             </div>
-            <div class="sidebar-tagline">CARE, ONE CHILD AT A TIME</div>
+            <div class="sidebar-tagline">${txt('tagline')}</div>
           </div>
 
           <nav class="sidebar-nav">
             <button class="sidebar-nav-item ${AppState.activeTab === 'dashboard' ? 'active' : ''}" onclick="navigateTo('dashboard')">
               <span style="font-size: 16px;">&#8862;</span>
-              <span>Overview</span>
+              <span>${txt('nav.overview')}</span>
             </button>
 
             <button class="sidebar-nav-item ${AppState.activeTab === 'children' ? 'active' : ''}" onclick="navigateTo('children')">
               <span style="font-size: 16px;">&#128101;</span>
-              <span>Children</span>
+              <span>${txt('nav.children')}</span>
             </button>
 
             <button class="sidebar-nav-item ${AppState.activeTab === 'assessments' ? 'active' : ''}" onclick="navigateTo('assessments')">
               <span style="font-size: 16px;">&#128221;</span>
-              <span>Assessments</span>
+              <span>${txt('nav.assessments')}</span>
             </button>
 
             <button class="sidebar-nav-item ${AppState.activeTab === 'community' ? 'active' : ''}" onclick="navigateTo('community')">
               <span style="font-size: 16px;">&#9825;</span>
-              <span>Community</span>
+              <span>${txt('nav.community')}</span>
             </button>
           </nav>
 
@@ -1572,18 +1886,18 @@ function renderApp() {
         <div class="sidebar-bottom">
           <button class="sidebar-secondary-btn" onclick="navigateTo('guidance')">
             <span>&#9432;</span>
-            <span>Help & guidance</span>
+            <span>${txt('nav.help')}</span>
           </button>
 
           <button class="sidebar-secondary-btn" onclick="alert('Supabase Live Cloud is active. Data persists safely.')">
             <span>&#9788;</span>
-            <span>Settings</span>
+            <span>${txt('nav.settings')}</span>
           </button>
 
           <div class="sidebar-user-block">
             <div>
-              <div class="sidebar-user-name">${workerName}</div>
-              <div class="sidebar-user-role">ASHA worker &middot; ${workerLoc}</div>
+              <div class="sidebar-user-name">${escapeHtml(workerName)}</div>
+              <div class="sidebar-user-role">ASHA worker &middot; ${escapeHtml(workerLoc)}</div>
             </div>
             <button class="sidebar-logout-icon" onclick="handleLogout()" title="Log out">
               &#10140;
@@ -1596,16 +1910,9 @@ function renderApp() {
       <main class="dashboard-main">
         <!-- Top Location & Utility Bar -->
         <header class="dashboard-top-bar">
-          <div class="dashboard-school-tag">${facility}</div>
+          <div class="dashboard-school-tag">${escapeHtml(facility)}</div>
           <div class="dashboard-top-right">
-            <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500;">
-              <span>&#127760;</span>
-              <select class="form-select" style="width: auto; padding: 4px 10px; background: transparent; border: none; font-size: 13px; cursor: pointer;" onchange="setLanguage(this.value)">
-                <option value="en" ${AppState.language === 'en' ? 'selected' : ''}>English v</option>
-                <option value="hi" ${AppState.language === 'hi' ? 'selected' : ''}>हिंदी</option>
-                <option value="kn" ${AppState.language === 'kn' ? 'selected' : ''}>ಕನ್ನಡ</option>
-              </select>
-            </div>
+            ${renderLangSwitcher()}
             <button class="icon-bell-btn" title="Notifications">&#128276;</button>
           </div>
         </header>

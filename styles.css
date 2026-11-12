@@ -660,6 +660,38 @@ button, input, select, textarea {
   gap: 18px;
 }
 
+.lang-switcher-group {
+  display: inline-flex;
+  background: #EAEAE4;
+  border-radius: 20px;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid #D8D8CF;
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4B5563;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.lang-btn:hover {
+  color: #1E2124;
+}
+
+.lang-btn.active {
+  background: var(--dusty-slate);
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
 .icon-bell-btn {
   background: transparent;
   border: none;
